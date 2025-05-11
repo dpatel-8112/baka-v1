@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Paper, Stack, Typography, Chip, TextField, Button, InputAdornment } from '@mui/material';
-import SchoolIcon from '@mui/icons-material/School';
+import React from 'react';
+import { Box, Typography, Chip } from '@mui/material';
+import CodeIcon from '@mui/icons-material/Code';
 import type { Profile } from '../../types/index';
 
 interface ProfileSkillsSectionProps {
@@ -8,23 +8,13 @@ interface ProfileSkillsSectionProps {
     setProfile: React.Dispatch<React.SetStateAction<Profile>>;
 }
 
-const sectionPaper = {
-    p: { xs: 2, md: 3 },
-    borderRadius: 3,
-    boxShadow: 1,
-    bgcolor: 'white',
-    mb: 3,
-};
-
 const ALL_SKILLS = [
-  'React', 'Node.js', 'Python', 'AWS', 'Docker', 'TypeScript', 'GraphQL', 'MongoDB',
-  'Product Management', 'Agile', 'Data Analysis', 'User Research', 'Strategy',
-  'Java', 'C++', 'Kubernetes', 'SQL', 'HTML', 'CSS', 'JavaScript'
+    'JavaScript', 'TypeScript', 'React', 'Node.js', 'Python', 'Java', 'C++', 'C#', 'PHP', 'Ruby',
+    'HTML', 'CSS', 'SQL', 'MongoDB', 'AWS', 'Docker', 'Kubernetes', 'Git', 'Agile', 'UI/UX Design',
+    'Project Management', 'Data Analysis', 'Machine Learning', 'DevOps', 'Mobile Development'
 ];
 
 const ProfileSkillsSection: React.FC<ProfileSkillsSectionProps> = ({ profile, setProfile }) => {
-    const [skillInput, setSkillInput] = useState('');
-
     const handleToggleSkill = (skill: string) => {
         setProfile((prev) => {
             const skills = prev.skills || [];
@@ -35,23 +25,35 @@ const ProfileSkillsSection: React.FC<ProfileSkillsSectionProps> = ({ profile, se
     };
 
     return (
-        <Paper sx={sectionPaper}>
-            <Stack direction="row" alignItems="center" spacing={1} mb={2}>
-                <SchoolIcon color="primary" />
-                <Typography variant="h6" fontWeight={700}>Skills</Typography>
-            </Stack>
-            <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+        <Box sx={{ mb: 4 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <CodeIcon sx={{ mr: 1, color: 'secondary.main' }} />
+                <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                    Skills
+                </Typography>
+            </Box>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                 {ALL_SKILLS.map((skill) => (
                     <Chip
                         key={skill}
                         label={skill}
-                        color={profile.skills?.includes(skill) ? 'primary' : 'default'}
                         onClick={() => handleToggleSkill(skill)}
-                        sx={{ mb: 1, cursor: 'pointer' }}
+                        variant={profile.skills?.includes(skill) ? 'filled' : 'outlined'}
+                        sx={{
+                            backgroundColor: profile.skills?.includes(skill) ? 'secondary.main' : 'none',
+                            border: profile.skills?.includes(skill) ? 'none' : '1px solid secondary.main',
+                            color: profile.skills?.includes(skill) ? 'white' : 'secondary.main',
+                            '&:hover': {
+                                backgroundColor: 'secondary.main',
+                            },
+                            transition: 'all 0.2s ease-in-out',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                            cursor: 'pointer',
+                        }}
                     />
                 ))}
-            </Stack>
-        </Paper>
+            </Box>
+        </Box>
     );
 };
 

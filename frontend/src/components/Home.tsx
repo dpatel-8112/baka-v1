@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, IconButton, Tooltip, CircularProgress } from '@mui/material';
+import { Box, IconButton, Tooltip, CircularProgress, Typography } from '@mui/material';
 import {
   ViewModule as GridViewIcon,
   ViewStream as CardViewIcon,
@@ -23,35 +23,60 @@ const Home: React.FC<HomeProps> = ({ onSwipe }) => {
   const [currentProfileIndex, setCurrentProfileIndex] = useState(0);
   const [isGridView, setIsGridView] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
 
   useEffect(() => {
-    fetchAllUsers()
-      .then(res => {
+    const loadProfiles = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        console.log('Fetching profiles...');
+        const res = await fetchAllUsers();
+        console.log('API Response:', res);
+        
         if (Array.isArray(res.data)) {
           // Filter out incomplete profiles and ensure photos array exists
-          const validProfiles = res.data.filter(profile => 
-            profile && 
-            profile.id && 
-            profile.name && 
-            Array.isArray(profile.photos)
-          ) as Profile[];
+          const validProfiles = res.data.filter(profile => {
+            const isValid = profile && 
+              profile.id && 
+              profile.name && 
+              Array.isArray(profile.photos);
+            
+            if (!isValid) {
+              console.warn('Invalid profile found:', profile);
+            }
+            return isValid;
+          }) as Profile[];
+          
+          console.log('Valid profiles:', validProfiles);
           setProfiles(validProfiles);
         } else {
           console.error('Expected array of profiles but got:', res.data);
+          setError('Invalid response format from server');
           setProfiles([]);
         }
-        setIsLoading(false);
-      })
-      .catch(err => {
+      } catch (err: any) {
         console.error('Error fetching profiles:', err);
+        const errorMessage = err.response?.data?.message || err.message || 'Failed to load profiles';
+        setError(`Error: ${errorMessage}. Please try logging out and logging back in.`);
         setProfiles([]);
+      } finally {
         setIsLoading(false);
-      });
+      }
+    };
+
+    loadProfiles();
   }, []);
 
   // Filter out the logged-in user
-  const filteredProfiles = profiles.filter(profile => profile.id !== user?.id);
+  const filteredProfiles = profiles.filter(profile => {
+    const isNotCurrentUser = profile.id !== user?.id;
+    if (!isNotCurrentUser) {
+      console.log('Filtered out current user:', profile);
+    }
+    return isNotCurrentUser;
+  });
 
   useEffect(() => {
     setCurrentProfileIndex(0);
@@ -73,6 +98,21 @@ const Home: React.FC<HomeProps> = ({ onSwipe }) => {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh', gap: 2 }}>
+        <Typography color="error">{error}</Typography>
+        <Button
+          variant="outlined"
+          startIcon={<RefreshIcon />}
+          onClick={() => window.location.reload()}
+        >
+          Retry
+        </Button>
       </Box>
     );
   }

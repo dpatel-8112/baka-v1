@@ -60,14 +60,24 @@ public class UserServiceImpl implements UserService {
         existingUser.setInterests(user.getInterests());
         existingUser.setSkills(user.getSkills());
         existingUser.setLanguages(user.getLanguages());
-        existingUser.setSocialLinks(user.getSocialLinks());
-        existingUser.setProjects(user.getProjects());
-        // existingUser.setPhotos(user.getPhotos());
+        
+        // Handle social links
+        if (user.getSocialLinks() != null) {
+            user.getSocialLinks().forEach(link -> link.setUser(existingUser));
+            existingUser.setSocialLinks(user.getSocialLinks());
+        }
+        
+        // Handle projects
+        if (user.getProjects() != null) {
+            user.getProjects().forEach(project -> project.setUser(existingUser));
+            existingUser.setProjects(user.getProjects());
+        }
+        
         existingUser.setVerified(user.isVerified());
         existingUser.setPhone(user.getPhone());
         existingUser.setAge(user.getAge());
         existingUser.setCompatibilityScore(user.getCompatibilityScore());
-        // Do not update id, email, or password here
+        
         return userRepository.save(existingUser);
     }
 

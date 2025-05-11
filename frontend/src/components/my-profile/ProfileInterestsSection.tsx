@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Paper, Stack, Typography, Chip, TextField, Button, InputAdornment } from '@mui/material';
+import React from 'react';
+import { Box, Typography, Chip } from '@mui/material';
 import InterestsIcon from '@mui/icons-material/Interests';
 import type { Profile } from '../../types/index';
 
@@ -8,23 +8,12 @@ interface ProfileInterestsSectionProps {
     setProfile: React.Dispatch<React.SetStateAction<Profile>>;
 }
 
-const sectionPaper = {
-    p: { xs: 2, md: 3 },
-    borderRadius: 3,
-    boxShadow: 1,
-    bgcolor: 'white',
-    mb: 3,
-};
-
 const ALL_INTERESTS = [
-    'Machine Learning', 'Cloud Computing', 'UI/UX Design', 'Photography', 'Hiking', 'Travel',
-    'Product Strategy', 'User Research', 'Data Analytics', 'Skiing', 'Chess',
-    'React', 'Node.js', 'Python', 'AWS', 'Docker', 'TypeScript', 'GraphQL', 'MongoDB'
+    'Reading', 'Travel', 'Music', 'Movies', 'Cooking', 'Photography', 'Sports', 'Art', 'Dancing', 'Hiking',
+    'Gaming', 'Yoga', 'Fitness', 'Fashion', 'Technology', 'Writing', 'Painting', 'Gardening', 'Swimming', 'Chess'
 ];
 
 const ProfileInterestsSection: React.FC<ProfileInterestsSectionProps> = ({ profile, setProfile }) => {
-    const [interestInput, setInterestInput] = useState('');
-
     const handleToggleInterest = (interest: string) => {
         setProfile((prev) => {
             const interests = prev.interests || [];
@@ -35,23 +24,37 @@ const ProfileInterestsSection: React.FC<ProfileInterestsSectionProps> = ({ profi
     };
 
     return (
-        <Paper sx={sectionPaper}>
-            <Stack direction="row" alignItems="center" spacing={1} mb={2}>
-                <InterestsIcon color="primary" />
-                <Typography variant="h6" fontWeight={700}>Interests</Typography>
-            </Stack>
-            <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+        <Box sx={{ mb: 4 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <InterestsIcon sx={{ mr: 1, color: 'primary.main' }} />
+                <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                    Interests
+                </Typography>
+            </Box>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                 {ALL_INTERESTS.map((interest) => (
                     <Chip
                         key={interest}
                         label={interest}
-                        color={profile.interests?.includes(interest) ? 'primary' : 'default'}
                         onClick={() => handleToggleInterest(interest)}
-                        sx={{ mb: 1, cursor: 'pointer' }}
+                        variant={profile.interests?.includes(interest) ? 'filled' : 'outlined'}
+                        sx={{
+                            backgroundColor: profile.interests?.includes(interest) ? 'primary.main' : 'none',
+                            border: profile.interests?.includes(interest) ? 'none' : '1px solid primary.main',
+                            color: profile.interests?.includes(interest) ? 'white' : 'primary.main',
+                            '&:hover': {
+                                backgroundColor: 'primary.main',
+                            },
+                            transition: 'all 0.2s ease-in-out',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                            cursor: 'pointer',
+                        }}
+
+                        
                     />
                 ))}
-            </Stack>
-        </Paper>
+            </Box>
+        </Box>
     );
 };
 

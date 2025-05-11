@@ -56,16 +56,40 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setLoading(true);
       setError(null);
+      console.log('Attempting login for:', email);
       
-      const response = await api.post<AuthResponse>('/auth/login', { email, password });
+      // Ensure the request is properly formatted
+      const loginData = {
+        email: email.trim(),
+        password: password
+      };
+      console.log('Login request data:', { ...loginData, password: '***' });
+      
+      const response = await api.post<AuthResponse>('/auth/login', loginData);
+      console.log('Login response:', response.data);
+      
       const { token, user } = response.data;
+      console.log('Received token:', token ? 'Token received' : 'No token');
+      console.log('Received user:', user);
+
+      if (!token) {
+        throw new Error('No token received from server');
+      }
 
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
       setUser(user);
+      
+      // Verify token is stored
+      const storedToken = localStorage.getItem('token');
+      console.log('Stored token:', storedToken ? 'Token stored' : 'No token stored');
+      
       navigate('/');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Invalid email or password');
+      console.error('Login error:', err);
+      console.error('Error response:', err.response?.data);
+      const errorMessage = err.response?.data?.message || err.message || 'Invalid email or password';
+      setError(errorMessage);
       throw err;
     } finally {
       setLoading(false);

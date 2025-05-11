@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Data
 @NoArgsConstructor
@@ -22,14 +23,17 @@ public class Photo {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnore
+    @JsonBackReference
     private User user;
 
     @Column(nullable = false)
     private String url;
 
+    @Column
     private String description;
-    private boolean profilePicture;
+
+    @Column
+    private boolean profilePicture = false;
 
     public Photo(User user, String url, String description, boolean profilePicture) {
         this.user = user;
@@ -48,5 +52,19 @@ public class Photo {
 
     public User getUser() {
         return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    @Override
+    public String toString() {
+        return "Photo{" +
+                "id=" + id +
+                ", url='" + url + '\'' +
+                ", description='" + description + '\'' +
+                ", profilePicture=" + profilePicture +
+                '}';
     }
 } 

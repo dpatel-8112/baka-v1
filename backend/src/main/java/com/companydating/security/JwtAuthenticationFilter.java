@@ -32,9 +32,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         
         try {
             String jwt = getJwtFromRequest(request);
+            System.out.println("Processing request: " + request.getRequestURI());
+            System.out.println("Authorization header: " + request.getHeader("Authorization"));
 
             if (jwt != null && jwtTokenProvider.validateToken(jwt)) {
                 Long userId = jwtTokenProvider.getUserIdFromJWT(jwt);
+                System.out.println("Valid JWT token found for userId: " + userId);
+                
                 UserDetails userDetails = userService.getUserById(userId)
                         .map(com.companydating.security.UserPrincipal::create)
                         .orElse(null);
@@ -51,9 +55,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             } else {
                 System.out.println("JWT is null or invalid");
+                if (jwt != null) {
+                    System.out.println("Token validation failed");
+                }
             }
         } catch (Exception ex) {
-            logger.error("Could not set user authentication in security context", ex);
+            System.out.println("Error in JWT authentication: " + ex.getMessage());
+            ex.printStackTrace();
         }
 
         filterChain.doFilter(request, response);

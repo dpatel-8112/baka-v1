@@ -9,7 +9,7 @@ interface ProfileLivePreviewProps {
 
 const ProfileLivePreview: React.FC<ProfileLivePreviewProps> = ({ profile }) => (
     <>
-    <Typography variant="h3" sx={{fontWeight: 700, color: 'primary.main', textAlign: 'center', letterSpacing: 1 }}>
+    <Typography variant="h3" sx={{fontWeight: 700, color: 'primary.main', textAlign: 'center', letterSpacing: 1, justifyContent: 'center', alignItems: 'center' }}>
                         Live Preview
                     </Typography>
                     {/* <Divider sx={{ mb: 2, width: '100%' }} /> */}

@@ -1,6 +1,9 @@
 frontend/node_modules
+
 backend/target
 backend/app.log
+backend/app.log.*
+backend/app.log.*.*
 
 .env
 
