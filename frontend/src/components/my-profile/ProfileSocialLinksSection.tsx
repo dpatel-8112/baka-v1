@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Paper, Stack, Typography, Chip, TextField, Button, InputAdornment, Box, Grid } from '@mui/material';
+import { Paper, Stack, Typography, Chip, TextField, Button, InputAdornment, Box, Grid, Select, MenuItem } from '@mui/material';
 import LinkIcon from '@mui/icons-material/Link';
 import type { Profile } from '../../types/index';
 
@@ -51,13 +51,21 @@ const ProfileSocialLinksSection: React.FC<ProfileSocialLinksSectionProps> = ({ p
             </Stack>
             <Grid container spacing={1} alignItems="center">
                 <Grid size={{ xs: 12, sm: 4 }}>
-                    <TextField
+                    <Select
                         size="small"
                         value={socialLinkInput.type}
                         onChange={e => setSocialLinkInput(l => ({ ...l, type: e.target.value }))}
-                        placeholder="Type (e.g. linkedin)"
+                        displayEmpty
                         fullWidth
-                    />
+                        renderValue={selected => selected || 'Select type'}
+                    >
+                        <MenuItem value="">Select type</MenuItem>
+                        <MenuItem value="linkedin">LinkedIn</MenuItem>
+                        <MenuItem value="github">GitHub</MenuItem>
+                        <MenuItem value="twitter">Twitter</MenuItem>
+                        <MenuItem value="instagram">Instagram</MenuItem>
+                        <MenuItem value="website">Website</MenuItem>
+                    </Select>
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <TextField
