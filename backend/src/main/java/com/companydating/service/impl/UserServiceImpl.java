@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
         existingUser.setLanguages(user.getLanguages());
         existingUser.setSocialLinks(user.getSocialLinks());
         existingUser.setProjects(user.getProjects());
-        existingUser.setPhotos(user.getPhotos());
+        // existingUser.setPhotos(user.getPhotos());
         existingUser.setVerified(user.isVerified());
         existingUser.setPhone(user.getPhone());
         existingUser.setAge(user.getAge());

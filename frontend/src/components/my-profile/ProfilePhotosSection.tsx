@@ -5,7 +5,7 @@ import { Box, Typography, Stack, Paper, Avatar, styled, Button, IconButton } fro
 import { Profile, Photo } from '../../types';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { uploadImage } from '../../services/api';
+import api from '../../services/api';
 
 const sectionPaper = {
     p: { xs: 2, md: 3 },
@@ -38,7 +38,7 @@ const ProfilePhotosSection: React.FC<ProfilePhotosSectionProps> = ({ profile, se
             const files = Array.from(e.target.files);
             for (const file of files) {
                 try {
-                    const response = await uploadImage(file);
+                    const response = await api.post('/images', file);
                     const photo = response.data as Photo;
                     setProfile((prev) => ({ ...prev, photos: [...prev.photos, photo] }));
                     if (!profile.image) {
@@ -52,15 +52,20 @@ const ProfilePhotosSection: React.FC<ProfilePhotosSectionProps> = ({ profile, se
     };
 
     // Remove photo
-    const handleRemovePhoto = (index: number) => {
-        setProfile((prev) => {
-            const newPhotos = prev.photos.filter((_, i) => i !== index);
-            return {
-                ...prev,
-                photos: newPhotos,
-                image: newPhotos[0]?.url || '',
-            };
-        });
+    const handleRemovePhoto = async (photoId: number) => {
+        try {
+            await api.delete(`/images/${photoId}`);
+            setProfile((prev) => {
+                const newPhotos = prev.photos.filter((photo) => photo.id !== photoId);
+                return {
+                    ...prev,
+                    photos: newPhotos,
+                    image: newPhotos[0]?.url || '',
+                };
+            });
+        } catch (err) {
+            alert('Failed to delete photo');
+        }
     };
 
     return (
@@ -73,7 +78,7 @@ const ProfilePhotosSection: React.FC<ProfilePhotosSectionProps> = ({ profile, se
                 {profile.photos.map((photo, idx) => (
                     <Box key={idx} sx={{ position: 'relative', display: 'inline-block' }}>
                         <Avatar src={photo.url} alt={`Photo ${idx + 1}`} sx={{ width: 56, height: 56, mr: 1, cursor: 'pointer' }} onClick={() => setSelectedImage(photo.url)} />
-                        <IconButton size="small" sx={{ position: 'absolute', top: -8, right: -8, bgcolor: 'white' }} onClick={() => handleRemovePhoto(idx)}>
+                        <IconButton size="small" sx={{ position: 'absolute', top: -8, right: -8, bgcolor: 'white' }} onClick={() => handleRemovePhoto(photo.id)}>
                             <DeleteIcon fontSize="small" />
                         </IconButton>
                     </Box>

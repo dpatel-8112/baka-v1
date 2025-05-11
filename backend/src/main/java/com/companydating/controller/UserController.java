@@ -26,6 +26,7 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
+        user.setPhotos(null);
         return ResponseEntity.ok(userService.updateUser(id, user));
     }
 

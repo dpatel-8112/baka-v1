@@ -45,4 +45,8 @@ public class Photo {
     public void setProfilePicture(boolean profilePicture) {
         this.profilePicture = profilePicture;
     }
+
+    public User getUser() {
+        return user;
+    }
 } 
