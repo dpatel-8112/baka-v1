@@ -18,6 +18,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.HashSet;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -88,7 +89,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getAllUsers() {
-        return userRepository.findAll();
+        List<User> users = userRepository.findAll();
+        // Initialize photos for each user if they don't have any
+        for (User user : users) {
+            if (user.getPhotos() == null) {
+                user.setPhotos(new HashSet<>());
+            }
+        }
+        return users;
     }
 
     @Override

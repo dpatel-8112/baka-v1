@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, IconButton, Tooltip } from '@mui/material';
+import { Box, IconButton, Tooltip, CircularProgress } from '@mui/material';
 import {
   ViewModule as GridViewIcon,
   ViewStream as CardViewIcon,
@@ -22,12 +22,32 @@ const Home: React.FC<HomeProps> = ({ onSwipe }) => {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [currentProfileIndex, setCurrentProfileIndex] = useState(0);
   const [isGridView, setIsGridView] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
 
   useEffect(() => {
-    fetchAllUsers().then(res => {
-      setProfiles(res.data as Profile[]);
-    });
+    fetchAllUsers()
+      .then(res => {
+        if (Array.isArray(res.data)) {
+          // Filter out incomplete profiles and ensure photos array exists
+          const validProfiles = res.data.filter(profile => 
+            profile && 
+            profile.id && 
+            profile.name && 
+            Array.isArray(profile.photos)
+          ) as Profile[];
+          setProfiles(validProfiles);
+        } else {
+          console.error('Expected array of profiles but got:', res.data);
+          setProfiles([]);
+        }
+        setIsLoading(false);
+      })
+      .catch(err => {
+        console.error('Error fetching profiles:', err);
+        setProfiles([]);
+        setIsLoading(false);
+      });
   }, []);
 
   // Filter out the logged-in user
@@ -48,6 +68,14 @@ const Home: React.FC<HomeProps> = ({ onSwipe }) => {
   const toggleView = () => {
     setIsGridView((prev) => !prev);
   };
+
+  if (isLoading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Box
