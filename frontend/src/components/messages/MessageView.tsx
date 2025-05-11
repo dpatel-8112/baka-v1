@@ -86,7 +86,7 @@ const MessageView: React.FC<MessageViewProps> = ({
         }}
       >
         <Avatar
-          src={selectedMatch.image || selectedMatch.photos[0]}
+          src={selectedMatch.image || selectedMatch.photos[0]?.url}
           alt={selectedMatch.name}
           sx={{ width: 40, height: 40, mr: 2 }}
         />

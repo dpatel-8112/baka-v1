@@ -9,6 +9,13 @@ export interface Project {
   link?: string;
 }
 
+export interface Photo {
+  id: number;
+  url: string;
+  description: string;
+  profilePicture: boolean;
+}
+
 export interface Profile {
   id: string;
   name: string;
@@ -17,7 +24,7 @@ export interface Profile {
   department: string;
   company: string;
   image: string;
-  photos: string[];
+  photos: Photo[];
   bio: string;
   aboutMe: string;
   location: string;

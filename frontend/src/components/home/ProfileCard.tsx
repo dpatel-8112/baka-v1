@@ -12,9 +12,11 @@ import { Profile } from '../../types/index';
 
 interface ProfileCardProps {
   profile: Profile;
+  selectedImage?: string | null;
+  onSwipe?: (direction: 'left' | 'right') => void;
 }
 
-const ProfileCard: React.FC<ProfileCardProps> = ({ profile }) => {
+const ProfileCard: React.FC<ProfileCardProps> = ({ profile, selectedImage, onSwipe }) => {
   return (
     <Card
       sx={{
@@ -31,7 +33,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile }) => {
       <Box sx={{ position: 'relative', width: '100%', height: 260, cursor: 'pointer' }}>
         <CardMedia
           component="img"
-          image={profile.photos[0]}
+          image={selectedImage || profile.photos[0]?.url}
           alt={profile.name}
           sx={{ width: '100%', height: 260, objectFit: 'cover', cursor: 'pointer' }}
         />

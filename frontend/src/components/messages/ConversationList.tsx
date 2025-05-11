@@ -124,7 +124,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
                         horizontal: 'right',
                       }}
                     >
-                      <Avatar src={match.profile.image || match.profile.photos[0]} alt={match.profile.name} />
+                      <Avatar src={match.profile.image || match.profile.photos[0]?.url} alt={match.profile.name} />
                     </Badge>
                   </ListItemAvatar>
                   <ListItemText 

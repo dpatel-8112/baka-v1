@@ -33,7 +33,7 @@ const MatchCard: React.FC<MatchCardProps> = ({ match, onMessage }) => {
       <CardMedia
         component="img"
         height="200"
-        image={match.photos[0]}
+        image={match.photos[0]?.url}
         alt={match.name}
         sx={{
           objectFit: 'cover',

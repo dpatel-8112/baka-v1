@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import com.companydating.security.UserPrincipal;
 
 import java.util.List;
 
@@ -101,5 +103,24 @@ public class UserController {
         User user2 = userService.getUserById(user2Id)
                 .orElseThrow(() -> new RuntimeException("User 2 not found"));
         return ResponseEntity.ok(userService.calculateCompatibilityScore(user1, user2));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<User> getCurrentUser(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        if (userPrincipal == null) {
+            return ResponseEntity.status(401).build();
+        }
+        return userService.getUserById(userPrincipal.getId())
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<User> updateCurrentUser(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody User updatedUser) {
+        if (userPrincipal == null) {
+            return ResponseEntity.status(401).build();
+        }
+        User user = userService.updateUser(userPrincipal.getId(), updatedUser);
+        return ResponseEntity.ok(user);
     }
 } 

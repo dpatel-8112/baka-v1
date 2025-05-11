@@ -46,15 +46,27 @@ public class UserServiceImpl implements UserService {
         
         // Update fields
         existingUser.setName(user.getName());
+        existingUser.setRole(user.getRole());
+        existingUser.setDepartment(user.getDepartment());
+        existingUser.setCompany(user.getCompany());
         existingUser.setBio(user.getBio());
         existingUser.setAboutMe(user.getAboutMe());
         existingUser.setLocation(user.getLocation());
         existingUser.setEducation(user.getEducation());
         existingUser.setYearsOfExperience(user.getYearsOfExperience());
+        existingUser.setBirthday(user.getBirthday());
+        existingUser.setGender(user.getGender());
         existingUser.setInterests(user.getInterests());
         existingUser.setSkills(user.getSkills());
         existingUser.setLanguages(user.getLanguages());
-        
+        existingUser.setSocialLinks(user.getSocialLinks());
+        existingUser.setProjects(user.getProjects());
+        existingUser.setPhotos(user.getPhotos());
+        existingUser.setVerified(user.isVerified());
+        existingUser.setPhone(user.getPhone());
+        existingUser.setAge(user.getAge());
+        existingUser.setCompatibilityScore(user.getCompatibilityScore());
+        // Do not update id, email, or password here
         return userRepository.save(existingUser);
     }
 

@@ -20,6 +20,11 @@ import ProfileAboutSection from './my-profile/ProfileAboutSection';
 import ProfilePhotosSection from './my-profile/ProfilePhotosSection';
 import ProfileInterestsSection from './my-profile/ProfileInterestsSection';
 import ProfileSkillsSection from './my-profile/ProfileSkillsSection';
+import { fetchMyProfile, updateMyProfile } from '../services/api';
+import ProfileLanguagesSection from './my-profile/ProfileLanguagesSection';
+import ProfileSocialLinksSection from './my-profile/ProfileSocialLinksSection';
+import { useAuth } from '../contexts/AuthContext';
+        
 
 const emptyProfile: Profile = {
     id: '1',
@@ -30,12 +35,12 @@ const emptyProfile: Profile = {
     company: 'Tech Corp',
     image: 'https://picsum.photos/id/7/600/600',
     photos: [
-      'https://picsum.photos/id/1/800/800',
-      'https://picsum.photos/id/2/800/800',
-      'https://picsum.photos/id/3/800/800',
-      'https://picsum.photos/id/4/800/800',
-      'https://picsum.photos/id/5/800/800',
-      'https://picsum.photos/id/6/800/800'
+      { id: 1, url: 'https://picsum.photos/id/1/800/800', description: '', profilePicture: false },
+      { id: 2, url: 'https://picsum.photos/id/2/800/800', description: '', profilePicture: false },
+      { id: 3, url: 'https://picsum.photos/id/3/800/800', description: '', profilePicture: false },
+      { id: 4, url: 'https://picsum.photos/id/4/800/800', description: '', profilePicture: false },
+      { id: 5, url: 'https://picsum.photos/id/5/800/800', description: '', profilePicture: false },
+      { id: 6, url: 'https://picsum.photos/id/6/800/800', description: '', profilePicture: false }
     ],
     bio: 'Passionate about building scalable applications and solving complex problems. Love hiking and photography in my free time.',
     aboutMe: 'I am a full-stack developer with a passion for creating user-friendly applications. When I\'m not coding, you can find me exploring hiking trails or capturing beautiful landscapes with my camera.',
@@ -89,20 +94,57 @@ const Item = styled(Paper)(({ theme }) => ({
 
 const MyProfile: React.FC = () => {
     const [profile, setProfile] = useState<Profile>({ ...emptyProfile });
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [interestInput, setInterestInput] = useState('');
     const [skillInput, setSkillInput] = useState('');
     const [languageInput, setLanguageInput] = useState('');
     const [socialLinkInput, setSocialLinkInput] = useState({ type: '', url: '' });
     const [projectInput, setProjectInput] = useState({ name: '', description: '', link: '' });
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | null>(null);
+
+    React.useEffect(() => {
+        setLoading(true);
+        fetchMyProfile()
+            .then(res => {
+                setProfile(res.data as Profile);
+                setLoading(false);
+            })
+            .catch(() => {
+                setLoading(false);
+                setError('Failed to load profile');
+            });
+    }, []);
+
+    const handleSave = async () => {
+        setSaving(true);
+        setError(null);
+        setSuccess(null);
+        try {
+            await updateMyProfile(profile);
+            setSuccess('Profile updated!');
+        } catch (e) {
+            setError('Failed to update profile');
+        } finally {
+            setSaving(false);
+        }
+    };
 
     // Handle image upload
     const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
             const files = Array.from(e.target.files);
-            const urls = files.map((file) => URL.createObjectURL(file));
-            setProfile((prev) => ({ ...prev, photos: [...prev.photos, ...urls] }));
-            if (urls.length > 0 && !profile.image) {
-                setProfile((prev) => ({ ...prev, image: urls[0] }));
+            const newPhotos = files.map((file, idx) => ({
+                id: Date.now() + idx,
+                url: URL.createObjectURL(file),
+                description: '',
+                profilePicture: false
+            }));
+            setProfile((prev) => ({ ...prev, photos: [...prev.photos, ...newPhotos] }));
+            if (newPhotos.length > 0 && !profile.image) {
+                setProfile((prev) => ({ ...prev, image: newPhotos[0].url }));
             }
         }
     };
@@ -114,7 +156,7 @@ const MyProfile: React.FC = () => {
             return {
                 ...prev,
                 photos: newPhotos,
-                image: newPhotos[0] || '',
+                image: newPhotos[0]?.url || '',
             };
         });
     };
@@ -172,8 +214,21 @@ const MyProfile: React.FC = () => {
         return age;
     };
 
+    if (loading) return <div>Loading...</div>;
+
     return (
         <Box sx={{ p: { xs: 1, md: 4 }, minHeight: '100vh', bgcolor: '#f6f8fb' }}>
+            {error && <Typography color="error" sx={{ mb: 2 }}>{error}</Typography>}
+            {success && <Typography color="primary" sx={{ mb: 2 }}>{success}</Typography>}
+            <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSave}
+                disabled={saving}
+                sx={{ mb: 2 }}
+            >
+                {saving ? 'Saving...' : 'Save Profile'}
+            </Button>
             <Grid container spacing={4} alignItems="flex-start" sx={{ maxHeight: { md: 'calc(100vh - 64px)' }, overflowY: { md: 'auto' } }}>
                 {/* Left: Form Sections */}
                 <Grid size={{ xs: 12, md: 7 }}>
@@ -185,71 +240,15 @@ const MyProfile: React.FC = () => {
                         {/* About */}
                         <ProfileAboutSection profile={profile} setProfile={setProfile} />
                         {/* Photos */}
-                        <ProfilePhotosSection profile={profile} setProfile={setProfile} />
+                        <ProfilePhotosSection profile={profile} setProfile={setProfile} selectedImage={selectedImage} setSelectedImage={setSelectedImage} />
                         {/* Interests */}
                         <ProfileInterestsSection profile={profile} setProfile={setProfile} />
                         {/* Skills */}
                         <ProfileSkillsSection profile={profile} setProfile={setProfile} />
                         {/* Languages */}
-                        <Paper sx={sectionPaper}>
-                            <Stack direction="row" alignItems="center" spacing={1} mb={2}>
-                                <LanguageIcon color="primary" />
-                                <Typography variant="h6" fontWeight={700}>Languages</Typography>
-                            </Stack>
-                            <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
-                                {(profile.languages || []).map((lang, idx) => (
-                                    <Chip key={idx} label={lang} onDelete={() => setProfile(p => ({ ...p, languages: (p.languages || []).filter((_, i) => i !== idx) }))} />
-                                ))}
-                                <TextField
-                                    size="small"
-                                    value={languageInput}
-                                    onChange={e => setLanguageInput(e.target.value)}
-                                    onKeyDown={e => e.key === 'Enter' && handleAddLanguage()}
-                                    placeholder="Add language"
-                                    InputProps={{
-                                        endAdornment: (
-                                            <InputAdornment position="end">
-                                                <Button onClick={handleAddLanguage}>Add</Button>
-                                            </InputAdornment>
-                                        ),
-                                    }}
-                                    sx={{ width: 160 }}
-                                />
-                            </Stack>
-                        </Paper>
+                        <ProfileLanguagesSection profile={profile} setProfile={setProfile} />
                         {/* Social Links */}
-                        <Paper sx={sectionPaper}>
-                            <Stack direction="row" alignItems="center" spacing={1} mb={2}>
-                                <LinkIcon color="primary" />
-                                <Typography variant="h6" fontWeight={700}>Social Links</Typography>
-                            </Stack>
-                            <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
-                                {(profile.socialLinks || []).map((link, idx) => (
-                                    <Chip key={idx} label={link.type} onDelete={() => setProfile(p => ({ ...p, socialLinks: (p.socialLinks || []).filter((_, i) => i !== idx) }))} />
-                                ))}
-                                <TextField
-                                    size="small"
-                                    value={socialLinkInput.type}
-                                    onChange={e => setSocialLinkInput(l => ({ ...l, type: e.target.value }))}
-                                    placeholder="Type (e.g. linkedin)"
-                                    sx={{ width: 120 }}
-                                />
-                                <TextField
-                                    size="small"
-                                    value={socialLinkInput.url}
-                                    onChange={e => setSocialLinkInput(l => ({ ...l, url: e.target.value }))}
-                                    placeholder="URL"
-                                    sx={{ width: 180 }}
-                                    InputProps={{
-                                        endAdornment: (
-                                            <InputAdornment position="end">
-                                                <Button onClick={handleAddSocialLink}>Add</Button>
-                                            </InputAdornment>
-                                        ),
-                                    }}
-                                />
-                            </Stack>
-                        </Paper>
+                        <ProfileSocialLinksSection profile={profile} setProfile={setProfile} />
                     </Item>
                 </Grid>
                 {/* Right: Live Preview */}
@@ -261,8 +260,6 @@ const MyProfile: React.FC = () => {
                     <Typography variant="h3" sx={{fontWeight: 700, color: 'primary.main', textAlign: 'center', letterSpacing: 1 }}>
                         Live Preview
                     </Typography>
-                    {/* <Divider sx={{ mb: 2, width: '100%' }} /> */}
-
                     <Paper
                         elevation={4}
                         sx={{
@@ -276,7 +273,7 @@ const MyProfile: React.FC = () => {
                             alignItems: 'center',
                         }}
                     >
-                        <ProfileCard profile={profile} />
+                        <ProfileCard profile={profile} selectedImage={selectedImage} />
                     </Paper>
                 </Grid>
             </Grid>

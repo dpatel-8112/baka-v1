@@ -45,12 +45,12 @@ function AppContent() {
       company: 'Tech Corp',
       image: 'https://picsum.photos/id/7/600/600',
       photos: [
-        'https://picsum.photos/id/1/800/800',
-        'https://picsum.photos/id/2/800/800',
-        'https://picsum.photos/id/3/800/800',
-        'https://picsum.photos/id/4/800/800',
-        'https://picsum.photos/id/5/800/800',
-        'https://picsum.photos/id/6/800/800'
+        { id: 1, url: 'https://picsum.photos/id/1/800/800', description: '', profilePicture: false },
+        { id: 2, url: 'https://picsum.photos/id/2/800/800', description: '', profilePicture: false },
+        { id: 3, url: 'https://picsum.photos/id/3/800/800', description: '', profilePicture: false },
+        { id: 4, url: 'https://picsum.photos/id/4/800/800', description: '', profilePicture: false },
+        { id: 5, url: 'https://picsum.photos/id/5/800/800', description: '', profilePicture: false },
+        { id: 6, url: 'https://picsum.photos/id/6/800/800', description: '', profilePicture: false }
       ],
       bio: 'Passionate about building scalable applications and solving complex problems. Love hiking and photography in my free time.',
       aboutMe: 'I am a full-stack developer with a passion for creating user-friendly applications. When I\'m not coding, you can find me exploring hiking trails or capturing beautiful landscapes with my camera.',
@@ -94,11 +94,11 @@ function AppContent() {
       company: 'Innovate Inc',
       image: 'https://picsum.photos/id/1/400/400',
       photos: [
-        'https://picsum.photos/id/1/400/400',
-        'https://picsum.photos/id/1/400/400',
-        'https://picsum.photos/id/1/400/400',
-        'https://picsum.photos/id/1/400/400',
-        'https://picsum.photos/id/1/400/400'
+        { id: 1, url: 'https://picsum.photos/id/1/400/400', description: '', profilePicture: false },
+        { id: 2, url: 'https://picsum.photos/id/1/400/400', description: '', profilePicture: false },
+        { id: 3, url: 'https://picsum.photos/id/1/400/400', description: '', profilePicture: false },
+        { id: 4, url: 'https://picsum.photos/id/1/400/400', description: '', profilePicture: false },
+        { id: 5, url: 'https://picsum.photos/id/1/400/400', description: '', profilePicture: false }
       ],
       bio: 'Product leader with a strong technical background. Passionate about creating products that make a difference.',
       aboutMe: 'I combine technical expertise with product vision to build solutions that users love. My background in engineering helps me bridge the gap between technical and business requirements.',

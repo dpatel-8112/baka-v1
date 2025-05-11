@@ -36,10 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (jwt != null && jwtTokenProvider.validateToken(jwt)) {
                 Long userId = jwtTokenProvider.getUserIdFromJWT(jwt);
                 UserDetails userDetails = userService.getUserById(userId)
-                        .map(user -> new org.springframework.security.core.userdetails.User(
-                                user.getEmail(),
-                                user.getPassword(),
-                                user.getAuthorities()))
+                        .map(com.companydating.security.UserPrincipal::create)
                         .orElse(null);
 
                 if (userDetails != null) {
@@ -48,7 +45,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                     SecurityContextHolder.getContext().setAuthentication(authentication);
+                    System.out.println("JWT authentication set for userId: " + userId);
+                } else {
+                    System.out.println("UserDetails is null for userId: " + userId);
                 }
+            } else {
+                System.out.println("JWT is null or invalid");
             }
         } catch (Exception ex) {
             logger.error("Could not set user authentication in security context", ex);

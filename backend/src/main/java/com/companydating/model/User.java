@@ -6,12 +6,15 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -23,6 +26,8 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(exclude = "photos")
+@ToString(exclude = "photos")
 @Entity
 @Table(name = "users")
 @EntityListeners(AuditingEntityListener.class)
@@ -83,7 +88,12 @@ public class User implements UserDetails {
     private String emailVerificationToken;
     private String resetPasswordToken;
 
+    private String phone;
+    private Integer age;
+    private Integer compatibilityScore;
+
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role));
     }
@@ -256,5 +266,23 @@ public class User implements UserDetails {
     }
     public void setResetPasswordToken(String resetPasswordToken) {
         this.resetPasswordToken = resetPasswordToken;
+    }
+    public String getPhone() {
+        return phone;
+    }
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+    public Integer getAge() {
+        return age;
+    }
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+    public Integer getCompatibilityScore() {
+        return compatibilityScore;
+    }
+    public void setCompatibilityScore(Integer compatibilityScore) {
+        this.compatibilityScore = compatibilityScore;
     }
 } 
