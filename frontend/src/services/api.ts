@@ -49,4 +49,6 @@ export const uploadImage = (file: File) => {
       'Content-Type': 'multipart/form-data',
     },
   });
-}; 
+};
+
+export const fetchAllUsers = () => api.get('/users'); 

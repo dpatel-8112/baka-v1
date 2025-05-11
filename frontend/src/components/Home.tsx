@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, IconButton, Tooltip } from '@mui/material';
 import {
   ViewModule as GridViewIcon,
@@ -9,18 +9,39 @@ import SwipeButtons from './home/SwipeButtons';
 import NoMoreProfiles from './home/NoMoreProfiles';
 import ProfileGrid from './home/ProfileGrid';
 import type { Profile } from '../types/index';
+import { fetchAllUsers } from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import Button from '@mui/material/Button';
 
 interface HomeProps {
-  profiles: Profile[];
-  onSwipe: (direction: 'left' | 'right') => void;
+  onSwipe: (direction: 'left' | 'right', profile: Profile) => void;
 }
 
-const Home: React.FC<HomeProps> = ({ profiles, onSwipe }) => {
+const Home: React.FC<HomeProps> = ({ onSwipe }) => {
+  const [profiles, setProfiles] = useState<Profile[]>([]);
   const [currentProfileIndex, setCurrentProfileIndex] = useState(0);
   const [isGridView, setIsGridView] = useState(false);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    fetchAllUsers().then(res => {
+      setProfiles(res.data as Profile[]);
+    });
+  }, []);
+
+  // Filter out the logged-in user
+  const filteredProfiles = profiles.filter(profile => profile.id !== user?.id);
+
+  useEffect(() => {
+    setCurrentProfileIndex(0);
+  }, [filteredProfiles.length]);
 
   const handleSwipe = (direction: 'left' | 'right') => {
-    onSwipe(direction);
+    const swipedProfile = filteredProfiles[currentProfileIndex];
+    if (swipedProfile) {
+      onSwipe(direction, swipedProfile);
+    }
     setCurrentProfileIndex((prev) => prev + 1);
   };
 
@@ -60,17 +81,27 @@ const Home: React.FC<HomeProps> = ({ profiles, onSwipe }) => {
         </IconButton>
       </Tooltip>
 
-      {currentProfileIndex < profiles.length ? (
+      {currentProfileIndex < filteredProfiles.length && filteredProfiles[currentProfileIndex] ? (
         <>
           {isGridView ? (
-            <ProfileGrid profile={profiles[currentProfileIndex]} />
+            <ProfileGrid profile={filteredProfiles[currentProfileIndex]} />
           ) : (
-            <ProfileCard profile={profiles[currentProfileIndex]} />
+            <ProfileCard profile={filteredProfiles[currentProfileIndex]} />
           )}
           <SwipeButtons onSwipe={handleSwipe} />
         </>
       ) : (
-        <NoMoreProfiles />
+        <>
+          <NoMoreProfiles />
+          <Button
+            variant="outlined"
+            startIcon={<RefreshIcon />}
+            sx={{ mt: 2 }}
+            onClick={() => setCurrentProfileIndex(0)}
+          >
+            Restart Matching
+          </Button>
+        </>
       )}
     </Box>
   );

@@ -187,21 +187,21 @@ function AppContent() {
 
   const [currentProfileIndex, setCurrentProfileIndex] = useState<number>(0);
 
-  const handleSwipe = (direction: 'left' | 'right') => {
+  const handleSwipe = (direction: 'left' | 'right', profile: Profile) => {
     if (direction === 'right') {
       // Create a proper match with necessary data for the messages list
       const newMatch: Match = {
         id: `match-${Date.now()}`,
         userId: user?.id || 'current-user-id',
-        matchedUserId: profiles[currentProfileIndex].id,
-        profile: profiles[currentProfileIndex],
+        matchedUserId: profile.id,
+        profile: profile,
         timestamp: new Date(),
         status: 'accepted', // Set as accepted for immediate visibility
         lastMessage: {
           id: `msg-${Date.now()}`,
           senderId: 'system',
           receiverId: user?.id || 'current-user-id',
-          content: `You matched with ${profiles[currentProfileIndex].name}! Say hello!`,
+          content: `You matched with ${profile.name}! Say hello!`,
           timestamp: new Date(),
           isRead: false
         }
@@ -214,17 +214,14 @@ function AppContent() {
         id: `notif-${Date.now()}`,
         userId: user?.id || 'current-user-id',
         type: 'match',
-        content: `You matched with ${profiles[currentProfileIndex].name}!`,
+        content: `You matched with ${profile.name}!`,
         timestamp: new Date(),
         isRead: false,
-        relatedId: profiles[currentProfileIndex].id
+        relatedId: profile.id
       };
 
       setNotifications((prev) => [...prev, newNotification]);
     }
-
-    // Move to next profile
-    setCurrentProfileIndex((prev) => prev + 1);
   };
 
   const handleNotificationClick = (): void => {
@@ -297,10 +294,7 @@ function AppContent() {
           } />
           <Route path="/" element={
             <ProtectedRoute>
-              <Home
-                profiles={profiles}
-                onSwipe={handleSwipe}
-              />
+              <Home onSwipe={handleSwipe} />
             </ProtectedRoute>
           } />
           <Route path="/messages" element={
