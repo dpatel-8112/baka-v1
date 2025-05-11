@@ -38,6 +38,9 @@ import ProfileSocialLinksSection from "./my-profile/ProfileSocialLinksSection";
 import { useAuth } from "../contexts/AuthContext";
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import ProfileGrid from './home/ProfileGrid';
+import Modal from '@mui/material/Modal';
+import GridViewIcon from '@mui/icons-material/GridView';
 
 const emptyProfile: Profile = {
   id: "1",
@@ -171,6 +174,7 @@ const MyProfile: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [openGridModal, setOpenGridModal] = useState(false);
 
   React.useEffect(() => {
     setLoading(true);
@@ -380,17 +384,22 @@ const MyProfile: React.FC = () => {
             alignSelf: { md: "flex-start" },
           }}
         >
-          <Typography
-            variant="h3"
-            sx={{
-              fontWeight: 700,
-              color: "primary.main",
-              textAlign: "center",
-              letterSpacing: 1,
-            }}
-          >
-            Live Preview
-          </Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography
+              variant="h3"
+              sx={{
+                fontWeight: 700,
+                color: "primary.main",
+                textAlign: "center",
+                letterSpacing: 1,
+              }}
+            >
+              Live Preview
+            </Typography>
+            <IconButton onClick={() => setOpenGridModal(true)} color="primary" title="Preview as Grid">
+              <GridViewIcon />
+            </IconButton>
+          </Box>
           <Paper
             elevation={4}
             sx={{
@@ -406,6 +415,15 @@ const MyProfile: React.FC = () => {
           >
             <ProfileCard profile={profile} selectedImage={selectedImage} />
           </Paper>
+          <Modal
+            open={openGridModal}
+            onClose={() => setOpenGridModal(false)}
+            sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          >
+            <Box sx={{ bgcolor: 'background.paper', borderRadius: 2, p: 2, maxWidth: '90vw', maxHeight: '90vh', overflow: 'auto' }}>
+              <ProfileGrid profile={profile} />
+            </Box>
+          </Modal>
           {/* Save Button - align full width and container */}
           <Grid container justifyContent="center">
             <Button

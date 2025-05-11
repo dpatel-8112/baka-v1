@@ -38,7 +38,11 @@ const ProfilePhotosSection: React.FC<ProfilePhotosSectionProps> = ({ profile, se
             const files = Array.from(e.target.files);
             for (const file of files) {
                 try {
-                    const response = await api.post('/images', file);
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    const response = await api.post('/images/upload', formData, {
+                        headers: { 'Content-Type': 'multipart/form-data' },
+                    });
                     const photo = response.data as Photo;
                     setProfile((prev) => ({ ...prev, photos: [...prev.photos, photo] }));
                     if (!profile.image) {
