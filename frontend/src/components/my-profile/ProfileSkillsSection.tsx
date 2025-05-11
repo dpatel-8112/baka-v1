@@ -16,50 +16,42 @@ const sectionPaper = {
     mb: 3,
 };
 
+const ALL_SKILLS = [
+  'React', 'Node.js', 'Python', 'AWS', 'Docker', 'TypeScript', 'GraphQL', 'MongoDB',
+  'Product Management', 'Agile', 'Data Analysis', 'User Research', 'Strategy',
+  'Java', 'C++', 'Kubernetes', 'SQL', 'HTML', 'CSS', 'JavaScript'
+];
+
 const ProfileSkillsSection: React.FC<ProfileSkillsSectionProps> = ({ profile, setProfile }) => {
     const [skillInput, setSkillInput] = useState('');
 
-    const handleAddSkill = () => {
-        if (skillInput.trim()) {
-            setProfile((prev) => ({ ...prev, skills: [...(prev.skills || []), skillInput.trim()] }));
-            setSkillInput('');
-        }
-    };
-
-    const handleDeleteSkill = (idx: number) => {
-        setProfile((prev) => ({
-            ...prev,
-            skills: (prev.skills || []).filter((_, i) => i !== idx),
-        }));
+    const handleToggleSkill = (skill: string) => {
+        setProfile((prev) => {
+            const skills = prev.skills || [];
+            return skills.includes(skill)
+                ? { ...prev, skills: skills.filter(s => s !== skill) }
+                : { ...prev, skills: [...skills, skill] };
+        });
     };
 
     return (
         <Paper sx={sectionPaper}>
-                            <Stack direction="row" alignItems="center" spacing={1} mb={2}>
-                                <SchoolIcon color="primary" />
-                                <Typography variant="h6" fontWeight={700}>Skills</Typography>
-                            </Stack>
-                            <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
-                                {(profile.skills || []).map((skill, idx) => (
-                                    <Chip key={idx} label={skill} onDelete={() => setProfile(p => ({ ...p, skills: (p.skills || []).filter((_, i) => i !== idx) }))} />
-                                ))}
-                                <TextField
-                                    size="small"
-                                    value={skillInput}
-                                    onChange={e => setSkillInput(e.target.value)}
-                                    onKeyDown={e => e.key === 'Enter' && handleAddSkill()}
-                                    placeholder="Add skill"
-                                    InputProps={{
-                                        endAdornment: (
-                                            <InputAdornment position="end">
-                                                <Button onClick={handleAddSkill}>Add</Button>
-                                            </InputAdornment>
-                                        ),
-                                    }}
-                                    sx={{ width: 160 }}
-                                />
-                            </Stack>
-                        </Paper>
+            <Stack direction="row" alignItems="center" spacing={1} mb={2}>
+                <SchoolIcon color="primary" />
+                <Typography variant="h6" fontWeight={700}>Skills</Typography>
+            </Stack>
+            <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+                {ALL_SKILLS.map((skill) => (
+                    <Chip
+                        key={skill}
+                        label={skill}
+                        color={profile.skills?.includes(skill) ? 'primary' : 'default'}
+                        onClick={() => handleToggleSkill(skill)}
+                        sx={{ mb: 1, cursor: 'pointer' }}
+                    />
+                ))}
+            </Stack>
+        </Paper>
     );
 };
 

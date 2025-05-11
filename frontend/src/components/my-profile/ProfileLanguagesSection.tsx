@@ -16,21 +16,20 @@ const sectionPaper = {
     mb: 3,
 };
 
+const ALL_LANGUAGES = [
+    'English', 'Spanish', 'French', 'Mandarin', 'Japanese', 'German', 'Hindi', 'Russian', 'Portuguese', 'Arabic', 'Italian', 'Korean', 'Bengali', 'Turkish', 'Vietnamese'
+];
+
 const ProfileLanguagesSection: React.FC<ProfileLanguagesSectionProps> = ({ profile, setProfile }) => {
     const [languageInput, setLanguageInput] = useState('');
 
-    const handleAddLanguage = () => {
-        if (languageInput.trim()) {
-            setProfile((prev) => ({ ...prev, languages: [...(prev.languages || []), languageInput.trim()] }));
-            setLanguageInput('');
-        }
-    };
-
-    const handleDeleteLanguage = (idx: number) => {
-        setProfile((prev) => ({
-            ...prev,
-            languages: (prev.languages || []).filter((_, i) => i !== idx),
-        }));
+    const handleToggleLanguage = (lang: string) => {
+        setProfile((prev) => {
+            const languages = prev.languages || [];
+            return languages.includes(lang)
+                ? { ...prev, languages: languages.filter(l => l !== lang) }
+                : { ...prev, languages: [...languages, lang] };
+        });
     };
 
     return (
@@ -42,23 +41,16 @@ const ProfileLanguagesSection: React.FC<ProfileLanguagesSectionProps> = ({ profi
                 </Typography>
             </Stack>
             <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" mb={2}>
-                {(profile.languages || []).map((lang, idx) => (
-                    <Chip key={idx} label={lang} onDelete={() => handleDeleteLanguage(idx)} sx={{ mb: 1 }} />
+                {ALL_LANGUAGES.map((lang) => (
+                    <Chip
+                        key={lang}
+                        label={lang}
+                        color={profile.languages?.includes(lang) ? 'primary' : 'default'}
+                        onClick={() => handleToggleLanguage(lang)}
+                        sx={{ mb: 1, cursor: 'pointer' }}
+                    />
                 ))}
             </Stack>
-            <Box display="flex" gap={1}>
-                <TextField
-                    size="small"
-                    value={languageInput}
-                    onChange={e => setLanguageInput(e.target.value)}
-                    onKeyDown={e => e.key === 'Enter' && handleAddLanguage()}
-                    placeholder="Add language"
-                    sx={{ width: 180 }}
-                />
-                <Button variant="contained" color="primary" onClick={handleAddLanguage} sx={{ minWidth: 80 }}>
-                    Add
-                </Button>
-            </Box>
         </Paper>
     );
 };
