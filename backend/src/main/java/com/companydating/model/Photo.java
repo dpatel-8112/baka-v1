@@ -2,8 +2,12 @@ package com.companydating.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "photos")
 public class Photo {
@@ -18,6 +22,21 @@ public class Photo {
     @Column(nullable = false)
     private String url;
 
-    private String caption;
-    private boolean isProfilePicture = false;
+    private String description;
+    private boolean profilePicture;
+
+    public Photo(User user, String url, String description, boolean profilePicture) {
+        this.user = user;
+        this.url = url;
+        this.description = description;
+        this.profilePicture = profilePicture;
+    }
+
+    public boolean isProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(boolean profilePicture) {
+        this.profilePicture = profilePicture;
+    }
 } 

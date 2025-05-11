@@ -1,6 +1,7 @@
 package com.companydating.service.impl;
 
 import com.companydating.model.User;
+import com.companydating.model.Photo;
 import com.companydating.repository.UserRepository;
 import com.companydating.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
