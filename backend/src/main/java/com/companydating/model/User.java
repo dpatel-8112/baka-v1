@@ -1,12 +1,17 @@
 package com.companydating.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity
@@ -17,36 +22,52 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String email;
-
-    @Column(nullable = false)
-    private String password;
-
-    @Column(nullable = false)
+    @NotBlank
     private String name;
 
-    private String bio;
-    private String location;
-    private String profilePicture;
-    private String interests;
-    private String occupation;
+    @Email
+    @NotBlank
+    @Column(unique = true)
+    private String email;
+
+    @NotBlank
+    private String password;
+
+    private String role;
+    private String department;
     private String company;
+    private String bio;
+    private String aboutMe;
+    private String location;
+    private String education;
+    private Integer yearsOfExperience;
+    private LocalDate birthday;
+    private String gender;
 
-    @Column(name = "email_verified")
-    private boolean emailVerified = false;
+    @ElementCollection
+    private Set<String> interests = new HashSet<>();
 
-    @Column(name = "email_verification_token")
-    private String emailVerificationToken;
+    @ElementCollection
+    private Set<String> skills = new HashSet<>();
 
-    @Column(name = "reset_password_token")
-    private String resetPasswordToken;
+    @ElementCollection
+    private Set<String> languages = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<SocialLink> socialLinks = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<Project> projects = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<Photo> photos = new HashSet<>();
+
+    private boolean isVerified = false;
+    private boolean isActive = true;
 
     @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 } 
