@@ -5,15 +5,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.security.Keys;
-import java.nio.charset.StandardCharsets;
 
+import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
 
-    @Value("${jwt.secret}")
-    private String jwtSecret;
+    // Generate a secure key for HS512 algorithm
+    private static final SecretKey KEY = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
     @Value("${jwt.expiration}")
     private int jwtExpirationInMs;
@@ -28,13 +28,13 @@ public class JwtTokenProvider {
                 .setSubject(Long.toString(userPrincipal.getId()))
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
-                .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS512)
+                .signWith(KEY)
                 .compact();
     }
 
     public Long getUserIdFromJWT(String token) {
         Claims claims = Jwts.parser()
-                .setSigningKey(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)))
+                .setSigningKey(KEY)
                 .parseClaimsJws(token)
                 .getBody();
 
@@ -43,7 +43,7 @@ public class JwtTokenProvider {
 
     public boolean validateToken(String authToken) {
         try {
-            Jwts.parser().setSigningKey(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8))).parseClaimsJws(authToken);
+            Jwts.parser().setSigningKey(KEY).parseClaimsJws(authToken);
             return true;
         } catch (SignatureException ex) {
             // Invalid JWT signature

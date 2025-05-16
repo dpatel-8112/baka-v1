@@ -1,19 +1,242 @@
-frontend/node_modules
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
 
-backend/target
-backend/app.log
-backend/app.log.*
-backend/app.log.*.*
+# Testing
+coverage/
 
+# Production
+build/
+dist/
+target/
+
+# Environment files
 .env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.production
 
-.m2/
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
+# IDE
 .idea/
-
 .vscode/
-
+*.swp
+*.swo
 .DS_Store
 
+# Docker
+.docker/
+docker-compose.override.yml
 
-apache-maven-3.9.6-bin.tar.gz
+# Database
+postgres_data/
+
+# Nginx
+nginx/ssl/
+nginx/conf.d/*.conf
+nginx/conf.d/*.conf.example
+nginx/logs/
+nginx/cache/
+nginx/temp/
+nginx/conf/nginx.conf
+nginx/conf/nginx.conf.example
+nginx/conf/conf.d/
+nginx/conf/ssl/
+
+# SSL certificates
+*.pem
+*.key
+*.crt
+*.csr
+*.srl
+*.p12
+*.pfx
+*.der
+*.cer
+*.crt
+*.p7b
+*.p7c
+*.p7s
+*.p8
+*.p8e
+*.p10
+*.p12
+*.pfx
+
+# Spring Boot
+*.jar
+*.war
+*.ear
+*.class
+*.log
+hs_err_pid*
+.spring-boot-devtools.restart.trigger
+
+# Maven
+.mvn/
+mvnw
+mvnw.cmd
+.mvn/wrapper/maven-wrapper.jar
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# React
+/build
+/dist
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.pem
+.vercel
+.turbo
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local Netlify folder
+.netlify
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variable files
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+# parcel-bundler cache
+.cache
+.parcel-cache
+
+# Next.js build output
+.next
+out
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+
+# Gatsby files
+.cache/
+public
+
+# vuepress build output
+.vuepress/dist
+
+# Serverless directories
+.serverless/
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# TernJS port file
+.tern-port
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# yarn v2
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+hs_err_pid*
+replay_pid*
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Eclipse
+.classpath
+.project
+.settings/
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# Spring Boot
+.spring-boot-devtools.restart.trigger
