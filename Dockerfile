@@ -3,7 +3,7 @@ FROM maven:3.8.4-openjdk-17 AS backend-build
 WORKDIR /app
 COPY backend/pom.xml .
 COPY backend/src ./src
-COPY backend/.mvn ./mvn
+# COPY backend/.mvn ./mvn
 RUN mvn clean package -DskipTests -Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true
 
 # Build stage for frontend
